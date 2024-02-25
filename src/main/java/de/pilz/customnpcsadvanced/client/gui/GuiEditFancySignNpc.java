@@ -15,9 +15,15 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
 
     private GuiNpcTextField tbName;
+    private int tilePosX;
+    private int tilePosY;
+    private int tilePosZ;
 
-    public GuiEditFancySignNpc(EntityNPCInterface npc) {
+    public GuiEditFancySignNpc(EntityNPCInterface npc, int tilePosX, int tilePosY, int tilePosZ) {
         super(npc);
+        this.tilePosX = tilePosX;
+        this.tilePosY = tilePosY;
+        this.tilePosZ = tilePosZ;
     }
 
     @Override
@@ -48,6 +54,6 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
 
     @Override
     public void save() {
-        NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity((int)npc.posX, (int)npc.posY, (int)npc.posZ, tbName.getText()));
+        NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(tilePosX, tilePosY, tilePosZ, tbName.getText()));
     }
 }

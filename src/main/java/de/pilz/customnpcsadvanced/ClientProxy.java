@@ -13,8 +13,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        CustomNpcPlusExtras.LOG.warn("CLIENT GUI ELEMENT " + ID + " Side: " + world.isRemote);
-
         if (ID <= EnumGuiType.values().length) {
             EnumGuiType gui = EnumGuiType.values()[ID];
 
@@ -26,7 +24,7 @@ public class ClientProxy extends CommonProxy {
                     EntityUtil.Copy(player, npc);
                     npc.display.setName(tilem.getNpcName());
                     npc.dialogs = tilem.getDialogOptions();
-                    return new GuiEditFancySignNpc(npc);
+                    return new GuiEditFancySignNpc(npc, x, y, z);
                 }
             }
         }

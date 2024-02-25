@@ -3,6 +3,7 @@ package de.pilz.customnpcsadvanced.network.handlers;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import de.pilz.customnpcsadvanced.CustomNpcPlusExtras;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.MessageOpenGuiEditTileEntityOk;
 import de.pilz.customnpcsadvanced.network.messages.MessageOpenGuiEditTileEntityRequest;
