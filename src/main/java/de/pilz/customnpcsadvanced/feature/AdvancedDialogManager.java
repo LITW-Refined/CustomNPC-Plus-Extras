@@ -1,7 +1,7 @@
 package de.pilz.customnpcsadvanced.feature;
 
 import de.pilz.customnpcsadvanced.network.NetworkManager;
-import de.pilz.customnpcsadvanced.network.messages.BaseMessageTileEntity;
+import de.pilz.customnpcsadvanced.network.messages.MessageOpenGuiEditTileEntityRequest;
 import de.pilz.customnpcsadvanced.te.IMixinTileEntityFancySign;
 import jds.bibliocraft.tileentities.TileEntityFancySign;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +29,7 @@ public class AdvancedDialogManager {
             boolean allowEdit = canEdit;
 
             if (allowEdit && heldItem != null && heldItem.getItem() == CustomItems.wand) {
-                NetworkManager.netWrap.sendToServer(new BaseMessageTileEntity(i, j, k));
+                NetworkManager.netWrap.sendToServer(new MessageOpenGuiEditTileEntityRequest(i, j, k));
                 return true;
             }
             else if (!player.isSneaking()) {

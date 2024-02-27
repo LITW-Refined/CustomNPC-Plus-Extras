@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import de.pilz.customnpcsadvanced.te.IMixinTileEntityFancySign;
 import jds.bibliocraft.tileentities.TileEntityFancySign;
@@ -15,6 +16,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import noppes.npcs.controllers.data.Dialog;
 import noppes.npcs.controllers.data.DialogOption;
@@ -70,9 +74,11 @@ public abstract class MixinTileEntityFancySign extends TileEntity implements ISi
         method = "readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V",
         at = @At("RETURN"),
         cancellable = true)
-    public void cnpcpextras$readEntityFromNBT(NBTTagCompound compound, CallbackInfo callback) {
+    public void cnpcpextras$readFromNBT(NBTTagCompound compound, CallbackInfo callback) {
         if (compound.hasKey(NBT_KEY_NPCNAME)) {
             cnpcpextras$npcname = compound.getString(NBT_KEY_NPCNAME);
+        } else {
+            cnpcpextras$npcname = DEFAULT_NPC_NAME;
         }
 
         if (compound.hasKey(NBT_KEY_QUESTS)) {
@@ -93,7 +99,7 @@ public abstract class MixinTileEntityFancySign extends TileEntity implements ISi
         method = "writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V",
         at = @At("RETURN"),
         cancellable = true)
-    public void cnpcpextras$writeEntityToNBT(NBTTagCompound compound, CallbackInfo callback) {
+    public void cnpcpextras$writeToNBT(NBTTagCompound compound, CallbackInfo callback) {
         // Name
         if (cnpcpextras$npcname.equals(DEFAULT_NPC_NAME)) {
             compound.removeTag(NBT_KEY_NPCNAME);
@@ -110,5 +116,33 @@ public abstract class MixinTileEntityFancySign extends TileEntity implements ISi
 			nbttaglist.appendTag(nbttagcompound);
 		}
 		compound.setTag(NBT_KEY_QUESTS, nbttaglist);
+    }
+
+    @Inject(
+        method = "onDataPacket(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/network/play/server/S35PacketUpdateTileEntity;)V",
+        at = @At("RETURN"),
+        cancellable = true,
+        remap = false)
+    public void cnpcpextras$onDataPacket(NetworkManager compound, S35PacketUpdateTileEntity packet, CallbackInfo callback) {
+        NBTTagCompound nbt = packet.func_148857_g();
+        cnpcpextras$readFromNBT(nbt, callback);
+    }
+
+    @Inject(
+        method = "getDescriptionPacket()Lnet/minecraft/network/Packet;",
+        at = @At("RETURN"),
+        cancellable = true,
+        remap = false)
+    public void cnpcpextras$getDescriptionPacket(CallbackInfoReturnable<Packet> callback) {
+        Packet packetRaw = callback.getReturnValue();
+
+        if (packetRaw instanceof S35PacketUpdateTileEntity) {
+            S35PacketUpdateTileEntity packet = (S35PacketUpdateTileEntity)packetRaw;
+            NBTTagCompound nbt = packet.func_148857_g();
+
+            if (nbt != null) {
+                cnpcpextras$writeToNBT(nbt, callback);
+            }
+        }
     }
 }

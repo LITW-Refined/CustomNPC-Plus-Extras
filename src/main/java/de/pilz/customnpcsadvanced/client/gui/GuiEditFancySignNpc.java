@@ -15,12 +15,14 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
 
     private GuiNpcTextField tbName;
+    private EntityNPCInterface fakeNpc;
     private int tilePosX;
     private int tilePosY;
     private int tilePosZ;
 
     public GuiEditFancySignNpc(EntityNPCInterface npc, int tilePosX, int tilePosY, int tilePosZ) {
-        super(npc);
+        super(null);
+        fakeNpc = npc;
         this.tilePosX = tilePosX;
         this.tilePosY = tilePosY;
         this.tilePosZ = tilePosZ;
@@ -33,7 +35,8 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
 		int y = guiTop + 10;
 		int gap = 21;
 
-        tbName = new GuiNpcTextField(0, this, guiLeft + 85, y, 214, 20, npc.display.name);
+        tbName = new GuiNpcTextField(0, this, guiLeft + 85, y, 214, 20, fakeNpc.display.name);
+        tbName.setText(fakeNpc.display.getName());
         this.addTextField(tbName);
         this.addButton(new GuiNpcButton(0, guiLeft + 85, y += gap, 214, 20, "gui.dialogs"));
     }
@@ -55,5 +58,6 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
     @Override
     public void save() {
         NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(tilePosX, tilePosY, tilePosZ, tbName.getText()));
+        player.worldObj.markBlockForUpdate(tilePosX, tilePosY, tilePosZ);
     }
 }
