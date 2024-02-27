@@ -1,13 +1,10 @@
 package de.pilz.customnpcsadvanced;
 
-import de.pilz.customnpcsadvanced.client.gui.EnumGuiType;
-import de.pilz.customnpcsadvanced.client.gui.GuiEditFancySignNpc;
-import de.pilz.customnpcsadvanced.te.IMixinTileEntityFancySign;
-import jds.bibliocraft.tileentities.TileEntityFancySign;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import noppes.npcs.client.EntityUtil;
-import noppes.npcs.entity.EntityDialogNpc;
+
+import de.pilz.customnpcsadvanced.client.gui.EnumGuiType;
+import de.pilz.customnpcsadvanced.feature.AdvancedTileEntityManager;
 
 public class ClientProxy extends CommonProxy {
 
@@ -17,14 +14,8 @@ public class ClientProxy extends CommonProxy {
             EnumGuiType gui = EnumGuiType.values()[ID];
 
             switch (gui) {
-                case EditFancySignNpc: {
-                    TileEntityFancySign tile = (TileEntityFancySign)world.getTileEntity(x, y, z);
-                    IMixinTileEntityFancySign tilem = (IMixinTileEntityFancySign)tile;
-                    EntityDialogNpc npc = new EntityDialogNpc(tile.getWorldObj());
-                    EntityUtil.Copy(player, npc);
-                    npc.display.setName(tilem.getNpcName());
-                    npc.dialogs = tilem.getDialogOptions();
-                    return new GuiEditFancySignNpc(npc, x, y, z);
+                case EditTileEntityNpc: {
+                    return AdvancedTileEntityManager.Instance.OpenEditorGui(player, world, x, y, z);
                 }
             }
         }

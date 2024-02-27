@@ -1,9 +1,10 @@
 package de.pilz.customnpcsadvanced.client.gui;
 
-import de.pilz.customnpcsadvanced.network.NetworkManager;
-import de.pilz.customnpcsadvanced.network.messages.MessageSaveTileEntity;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
+
+import de.pilz.customnpcsadvanced.network.NetworkManager;
+import de.pilz.customnpcsadvanced.network.messages.MessageSaveTileEntity;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.advanced.GuiNPCDialogNpcOptions;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
@@ -12,7 +13,7 @@ import noppes.npcs.client.gui.util.GuiNpcTextField;
 import noppes.npcs.client.gui.util.IGuiData;
 import noppes.npcs.entity.EntityNPCInterface;
 
-public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
+public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiData {
 
     private GuiNpcTextField tbName;
     private EntityNPCInterface fakeNpc;
@@ -20,7 +21,7 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
     private int tilePosY;
     private int tilePosZ;
 
-    public GuiEditFancySignNpc(EntityNPCInterface npc, int tilePosX, int tilePosY, int tilePosZ) {
+    public GuiEditTileEntityNpcData(EntityNPCInterface npc, int tilePosX, int tilePosY, int tilePosZ) {
         super(null);
         fakeNpc = npc;
         this.tilePosX = tilePosX;
@@ -29,11 +30,11 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
     }
 
     @Override
-    public void initGui(){
-    	super.initGui();
+    public void initGui() {
+        super.initGui();
 
-		int y = guiTop + 10;
-		int gap = 21;
+        int y = guiTop + 10;
+        int gap = 21;
 
         tbName = new GuiNpcTextField(0, this, guiLeft + 85, y, 214, 20, fakeNpc.display.name);
         tbName.setText(fakeNpc.display.getName());
@@ -42,8 +43,8 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
     }
 
     @Override
-	protected void actionPerformed(GuiButton guibutton) {
-        GuiNpcButton button = (GuiNpcButton)guibutton;
+    protected void actionPerformed(GuiButton guibutton) {
+        GuiNpcButton button = (GuiNpcButton) guibutton;
 
         if (button.id == 0) {
             save();
@@ -52,12 +53,11 @@ public class GuiEditFancySignNpc extends GuiNPCInterface2 implements IGuiData {
     }
 
     @Override
-    public void setGuiData(NBTTagCompound compound) {
-    }
+    public void setGuiData(NBTTagCompound compound) {}
 
     @Override
     public void save() {
         NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(tilePosX, tilePosY, tilePosZ, tbName.getText()));
-        player.worldObj.markBlockForUpdate(tilePosX, tilePosY, tilePosZ);
+        // player.worldObj.markBlockForUpdate(tilePosX, tilePosY, tilePosZ);
     }
 }

@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -13,7 +13,11 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 
-@Mod(modid = CustomNpcPlusExtras.MODID, version = Tags.VERSION, name = "CustomNPC+ Advancements", acceptedMinecraftVersions = "[1.7.10]")
+@Mod(
+    modid = CustomNpcPlusExtras.MODID,
+    version = Tags.VERSION,
+    name = "CustomNPC+ Advancements",
+    acceptedMinecraftVersions = "[1.7.10]")
 public class CustomNpcPlusExtras {
 
     public static final String MODID = "customnpcsadvanced";
@@ -22,7 +26,9 @@ public class CustomNpcPlusExtras {
     @Instance
     public static CustomNpcPlusExtras Instance;
 
-    @SidedProxy(clientSide = "de.pilz.customnpcsadvanced.ClientProxy", serverSide = "de.pilz.customnpcsadvanced.CommonProxy")
+    @SidedProxy(
+        clientSide = "de.pilz.customnpcsadvanced.ClientProxy",
+        serverSide = "de.pilz.customnpcsadvanced.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler
@@ -35,7 +41,7 @@ public class CustomNpcPlusExtras {
     @Mod.EventHandler
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        NetworkManager.init();        
+        NetworkManager.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
         proxy.init(event);
     }

@@ -1,12 +1,13 @@
 package de.pilz.customnpcsadvanced.network.handlers;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import de.pilz.customnpcsadvanced.network.messages.MessageSaveTileEntity;
-import de.pilz.customnpcsadvanced.te.IMixinTileEntityFancySign;
-import jds.bibliocraft.tileentities.TileEntityFancySign;
-import net.minecraft.entity.player.EntityPlayerMP;
+import de.pilz.customnpcsadvanced.te.ITileEntityNpc;
 
 public class HandlerSaveTileEntity implements IMessageHandler<MessageSaveTileEntity, IMessage> {
 
@@ -14,11 +15,12 @@ public class HandlerSaveTileEntity implements IMessageHandler<MessageSaveTileEnt
     public IMessage onMessage(MessageSaveTileEntity message, MessageContext ctx) {
         EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
-        TileEntityFancySign tile = (TileEntityFancySign)player.worldObj.getTileEntity(message.posX, message.posY, message.posZ);
-        IMixinTileEntityFancySign tilem = (IMixinTileEntityFancySign)tile;
+        TileEntity tile = (TileEntity) player.worldObj.getTileEntity(message.posX, message.posY, message.posZ);
+        ITileEntityNpc tilem = (ITileEntityNpc) tile;
 
         if (tilem != null) {
-            tilem.setNpcName(message.name);
+            tilem.getNpcData(true)
+                .setTitle(message.name);
             player.worldObj.markBlockForUpdate(message.posX, message.posY, message.posZ);
         }
 

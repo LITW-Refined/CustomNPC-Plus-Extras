@@ -35,5 +35,5 @@
  */
 dependencies {
     api(project.files("libs/CustomNPC-Plus-nomixin-dev.jar"))
-    implementation(rfg.deobf(project.files("libs/BiblioCraft.jar")))
+    runtimeOnly(rfg.deobf(project.files("libs/BiblioCraft.jar")))
 }

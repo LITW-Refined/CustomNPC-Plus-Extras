@@ -5,7 +5,9 @@
   "refmap": "mixins.customnpcsadvanced.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+    "MixinTileEntity"
+  ],
   "client": [],
   "server": []
 }
