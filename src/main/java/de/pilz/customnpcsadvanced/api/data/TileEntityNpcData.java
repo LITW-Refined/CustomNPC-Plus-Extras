@@ -1,4 +1,4 @@
-package de.pilz.customnpcsadvanced.data;
+package de.pilz.customnpcsadvanced.api.data;
 
 import java.util.HashMap;
 
@@ -66,7 +66,6 @@ public class TileEntityNpcData {
             } else {
                 title = DEFAULT_NPC_NAME;
             }
-            de.pilz.customnpcsadvanced.CustomNpcPlusExtras.LOG.warn("READ " + title);
 
             // Dialogs
             if (compound.hasKey(NBT_KEY_DIALOGS)) {
@@ -91,7 +90,6 @@ public class TileEntityNpcData {
         // Title
         if (title != null && !title.equals(DEFAULT_NPC_NAME)) {
             compound.setString(NBT_KEY_NPCNAME, title);
-            de.pilz.customnpcsadvanced.CustomNpcPlusExtras.LOG.warn("WRITE " + title);
         }
 
         // Dialogs

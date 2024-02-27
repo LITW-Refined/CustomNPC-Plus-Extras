@@ -6,8 +6,8 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import de.pilz.customnpcsadvanced.api.ITileEntityNpc;
 import de.pilz.customnpcsadvanced.network.messages.MessageSaveTileEntity;
-import de.pilz.customnpcsadvanced.te.ITileEntityNpc;
 
 public class HandlerSaveTileEntity implements IMessageHandler<MessageSaveTileEntity, IMessage> {
 

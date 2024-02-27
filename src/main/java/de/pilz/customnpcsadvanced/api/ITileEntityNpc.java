@@ -1,6 +1,6 @@
-package de.pilz.customnpcsadvanced.te;
+package de.pilz.customnpcsadvanced.api;
 
-import de.pilz.customnpcsadvanced.data.TileEntityNpcData;
+import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 
 public interface ITileEntityNpc {
 

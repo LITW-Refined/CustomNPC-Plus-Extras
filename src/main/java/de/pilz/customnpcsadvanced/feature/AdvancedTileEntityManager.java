@@ -8,11 +8,11 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import de.pilz.customnpcsadvanced.api.ITileEntityNpc;
+import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.client.gui.GuiEditTileEntityNpcData;
-import de.pilz.customnpcsadvanced.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.MessageOpenGuiEditTileEntityRequest;
-import de.pilz.customnpcsadvanced.te.ITileEntityNpc;
 import noppes.npcs.CustomItems;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.client.EntityUtil;

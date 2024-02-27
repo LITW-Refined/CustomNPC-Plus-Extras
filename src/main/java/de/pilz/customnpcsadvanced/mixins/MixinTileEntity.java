@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import de.pilz.customnpcsadvanced.data.TileEntityNpcData;
-import de.pilz.customnpcsadvanced.te.ITileEntityNpc;
+import de.pilz.customnpcsadvanced.api.ITileEntityNpc;
+import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 
 @Mixin(TileEntity.class)
 public abstract class MixinTileEntity implements ITileEntityNpc {
