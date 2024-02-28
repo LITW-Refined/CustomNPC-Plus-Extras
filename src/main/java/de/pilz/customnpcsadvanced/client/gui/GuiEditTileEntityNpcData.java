@@ -2,25 +2,23 @@ package de.pilz.customnpcsadvanced.client.gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
-
+import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
 import noppes.npcs.client.NoppesUtil;
-import noppes.npcs.client.gui.advanced.GuiNPCDialogNpcOptions;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcTextField;
 import noppes.npcs.client.gui.util.IGuiData;
-import noppes.npcs.entity.EntityNPCInterface;
 
 public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiData {
 
     private GuiNpcTextField tbName;
-    private EntityNPCInterface fakeNpc;
+    private TileEntityNpc fakeNpc;
     private TileEntityNpcData npcData;
 
-    public GuiEditTileEntityNpcData(EntityNPCInterface npc, TileEntityNpcData npcData) {
+    public GuiEditTileEntityNpcData(TileEntityNpc npc, TileEntityNpcData npcData) {
         super(null);
         fakeNpc = npc;
         this.npcData = npcData;
@@ -36,7 +34,7 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
         tbName = new GuiNpcTextField(0, this, guiLeft + 85, y, 214, 20, fakeNpc.display.name);
         tbName.setText(fakeNpc.display.getName());
         this.addTextField(tbName);
-        this.addButton(new GuiNpcButton(0, guiLeft + 85, y += gap, 214, 20, "gui.dialogs"));
+        this.addButton(new GuiNpcButton(0, guiLeft + 85, y += gap, 214, 20, "gui.dialogOptions"));
     }
 
     @Override
@@ -45,7 +43,7 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
 
         if (button.id == 0) {
             save();
-            NoppesUtil.openGUI(player, new GuiNPCDialogNpcOptions(npc, this));
+            NoppesUtil.openGUI(player, new GuiEditTileEntityNpcDialogOptions(fakeNpc, npcData, this));
         }
     }
 

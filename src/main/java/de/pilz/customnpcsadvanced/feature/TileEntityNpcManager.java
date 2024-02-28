@@ -11,6 +11,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import de.pilz.customnpcsadvanced.api.ITileEntityNpcManager;
+import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcDataContainer;
 import de.pilz.customnpcsadvanced.client.gui.GuiEditTileEntityNpcData;
@@ -46,6 +47,8 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
             if (heldItem != null && heldItem.getItem() == CustomItems.wand
                 && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
+                TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
+                PlayerDataController.Instance.getPlayerData(player).editingNpc = npc;
                 NetworkManager.netWrap.sendTo(new MessageOpenGuiEditTileEntity(npcData), player);
                 event.useBlock = Result.DENY;
                 event.useItem = Result.DENY;
@@ -79,7 +82,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         TileEntityNpcData npcData = TileEntityNpcManager.Instance.editingNpc;
 
         if (tile != null && npcData != null && npcData.equals(tile)) {
-            EntityDialogNpc npc = new EntityDialogNpc(tile.getWorldObj());
+            TileEntityNpc npc = new TileEntityNpc(tile.getWorldObj(), npcData);
             EntityUtil.Copy(player, npc);
             npc.display.setName(npcData.getTitle());
             npc.dialogs = npcData.getDialogOptions();
@@ -142,6 +145,8 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         if (!found) {
             dataContainer.npcData.add(newData);
         }
+
+        dataContainer.markDirty();
     }
 
     @Override
