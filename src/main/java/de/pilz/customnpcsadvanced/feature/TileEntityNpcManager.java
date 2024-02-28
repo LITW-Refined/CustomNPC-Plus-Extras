@@ -25,6 +25,7 @@ import noppes.npcs.config.ConfigMain;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.Dialog;
 import noppes.npcs.controllers.data.DialogOption;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityDialogNpc;
 
 public class TileEntityNpcManager implements ITileEntityNpcManager {
@@ -49,7 +50,9 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
                 && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
-                PlayerDataController.Instance.getPlayerData(player).editingNpc = npc;
+                PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
+                playerData.setGUIOpen(true);
+                playerData.editingNpc = npc;
                 NetworkManager.netWrap.sendTo(new MessageOpenGuiEditTileEntity(npcData), player);
                 event.useBlock = Result.DENY;
                 event.useItem = Result.DENY;
@@ -87,7 +90,9 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
             EntityUtil.Copy(player, npc);
             npc.display.setName(npcData.getTitle());
             npc.dialogs = npcData.getDialogOptions();
-            PlayerDataController.Instance.getPlayerData(player).editingNpc = npc;
+            PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
+            playerData.setGUIOpen(true);
+            playerData.editingNpc = npc;
             return new GuiEditTileEntityNpcData(npc, npcData);
         }
 

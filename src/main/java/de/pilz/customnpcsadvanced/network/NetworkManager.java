@@ -11,16 +11,12 @@ import de.pilz.customnpcsadvanced.network.messages.server.MessageOpenGuiEditTile
 
 public class NetworkManager {
 
-    private static int curMsgId = 0;
-
     public static final SimpleNetworkWrapper netWrap = NetworkRegistry.INSTANCE
         .newSimpleChannel(CustomNpcPlusExtras.MODID);
 
     public static void init() {
+        int curMsgId = 0;
         netWrap.registerMessage(HandlerSaveTileEntity.class, MessageSaveTileEntity.class, curMsgId++, Side.SERVER);
-    }
-
-    public static void initClient() {
         netWrap.registerMessage(
             HandlerOpenGuiEditTileEntity.class,
             MessageOpenGuiEditTileEntity.class,

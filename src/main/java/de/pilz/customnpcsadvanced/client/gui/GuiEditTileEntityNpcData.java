@@ -15,9 +15,9 @@ import noppes.npcs.client.gui.util.IGuiData;
 
 public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiData {
 
+    private final TileEntityNpc fakeNpc;
+    private final TileEntityNpcData npcData;
     private GuiNpcTextField tbName;
-    private TileEntityNpc fakeNpc;
-    private TileEntityNpcData npcData;
 
     public GuiEditTileEntityNpcData(TileEntityNpc npc, TileEntityNpcData npcData) {
         super(null);

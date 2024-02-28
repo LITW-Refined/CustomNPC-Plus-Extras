@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import de.pilz.customnpcsadvanced.feature.TileEntityNpcManager;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 
@@ -45,5 +46,13 @@ public class CommonProxy implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         return null;
+    }
+
+    public EntityPlayer getPlayer(MessageContext ctx) {
+        return ctx.getServerHandler().playerEntity;
+    }
+
+    public World getWorld(MessageContext ctx) {
+        return ctx.getServerHandler().playerEntity.worldObj;
     }
 }

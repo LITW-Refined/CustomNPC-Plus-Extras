@@ -49,7 +49,10 @@ public class TileEntityNpcData {
     }
 
     public void setDialogOptions(HashMap<Integer, DialogOption> options) {
-        dialogs = options;
+        dialogs.clear();
+        for (int slot : options.keySet()) {
+            dialogs.put(slot, options.get(slot));
+        }
     }
 
     public Dialog getDialog(EntityPlayer player) {

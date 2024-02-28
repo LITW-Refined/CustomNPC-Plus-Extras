@@ -10,8 +10,9 @@ import noppes.npcs.client.gui.advanced.GuiNPCDialogNpcOptions;
 
 public class GuiEditTileEntityNpcDialogOptions extends GuiNPCDialogNpcOptions {
 
-    private TileEntityNpc fakeNpc;
-    private TileEntityNpcData npcData;
+    @SuppressWarnings("unused")
+    private final TileEntityNpc fakeNpc;
+    private final TileEntityNpcData npcData;
 
     public GuiEditTileEntityNpcDialogOptions(TileEntityNpc npc, TileEntityNpcData npcData, GuiScreen parent) {
         super(npc, parent);
@@ -22,7 +23,8 @@ public class GuiEditTileEntityNpcDialogOptions extends GuiNPCDialogNpcOptions {
     @Override
     public void save() {
         super.save();
-        npcData.setDialogOptions(fakeNpc.dialogs);
+        // It is useless to copy dialogs here on client side because CNPC+ saves them always on server side.
+        // npcData.setDialogOptions(fakeNpc.dialogs);
         NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(npcData));
     }
 }
