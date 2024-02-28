@@ -11,7 +11,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import de.pilz.customnpcsadvanced.network.NetworkManager;
 
 @Mod(
     modid = CustomNpcPlusExtras.MODID,
@@ -41,7 +40,6 @@ public class CustomNpcPlusExtras {
     @Mod.EventHandler
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        NetworkManager.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
         proxy.init(event);
     }

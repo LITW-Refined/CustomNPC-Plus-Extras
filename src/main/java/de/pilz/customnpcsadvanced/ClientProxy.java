@@ -3,8 +3,10 @@ package de.pilz.customnpcsadvanced;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import de.pilz.customnpcsadvanced.client.gui.EnumGuiType;
 import de.pilz.customnpcsadvanced.feature.TileEntityNpcManager;
+import de.pilz.customnpcsadvanced.network.NetworkManager;
 
 public class ClientProxy extends CommonProxy {
 
@@ -21,5 +23,11 @@ public class ClientProxy extends CommonProxy {
         }
 
         return null;
+    }
+
+    @Override
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        NetworkManager.initClient();
     }
 }

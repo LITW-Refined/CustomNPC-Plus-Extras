@@ -165,6 +165,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         for (TileEntityNpcData data : dataContainer.npcData) {
             if (data.equals(te)) {
                 dataContainer.npcData.remove(data);
+                dataContainer.markDirty();
                 break;
             }
         }
@@ -175,6 +176,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         for (TileEntityNpcData data : dataContainer.npcData) {
             if (data.equals(newData)) {
                 dataContainer.npcData.remove(data);
+                dataContainer.markDirty();
                 break;
             }
         }

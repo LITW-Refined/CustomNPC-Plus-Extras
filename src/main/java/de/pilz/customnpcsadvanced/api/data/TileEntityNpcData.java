@@ -84,7 +84,7 @@ public class TileEntityNpcData {
     }
 
     public boolean equals(String id) {
-        return this.id == id;
+        return this.id.equals(id);
     }
 
     public boolean equals(TileEntityNpcData other) {

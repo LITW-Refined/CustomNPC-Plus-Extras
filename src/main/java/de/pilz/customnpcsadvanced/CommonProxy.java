@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.pilz.customnpcsadvanced.feature.TileEntityNpcManager;
+import de.pilz.customnpcsadvanced.network.NetworkManager;
 
 public class CommonProxy implements IGuiHandler {
 
@@ -27,6 +28,7 @@ public class CommonProxy implements IGuiHandler {
         FMLCommonHandler.instance()
             .bus()
             .register(TileEntityNpcManager.Instance);
+        NetworkManager.init();
     }
 
     // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
