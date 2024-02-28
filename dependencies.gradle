@@ -35,5 +35,4 @@
  */
 dependencies {
     api(project.files("libs/CustomNPC-Plus-nomixin-dev.jar"))
-    runtimeOnly(rfg.deobf("curse.maven:bibliocraft-228027:2423369"))
 }
