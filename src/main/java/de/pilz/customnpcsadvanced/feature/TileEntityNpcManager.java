@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -106,6 +107,16 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         }
     }
 
+    @SubscribeEvent
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (event.block.hasTileEntity(event.blockMetadata)) {
+            TileEntity te = event.world.getTileEntity(event.x, event.y, event.z);
+            if (te != null) {
+                removeNpcData(te);
+            }
+        }
+    }
+
     @Override
     public TileEntityNpcData getNpcData(String id) {
         for (TileEntityNpcData data : dataContainer.npcData) {
@@ -154,6 +165,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         for (TileEntityNpcData data : dataContainer.npcData) {
             if (data.equals(te)) {
                 dataContainer.npcData.remove(data);
+                break;
             }
         }
     }
@@ -163,6 +175,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         for (TileEntityNpcData data : dataContainer.npcData) {
             if (data.equals(newData)) {
                 dataContainer.npcData.remove(data);
+                break;
             }
         }
     }
