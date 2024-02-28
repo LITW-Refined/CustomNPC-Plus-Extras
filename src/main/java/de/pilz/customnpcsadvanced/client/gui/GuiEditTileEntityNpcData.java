@@ -2,6 +2,7 @@ package de.pilz.customnpcsadvanced.client.gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
+
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;

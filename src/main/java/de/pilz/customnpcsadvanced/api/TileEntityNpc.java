@@ -1,8 +1,9 @@
 package de.pilz.customnpcsadvanced.api;
 
-import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
+import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class TileEntityNpc extends EntityNPCInterface {
@@ -18,25 +19,25 @@ public class TileEntityNpc extends EntityNPCInterface {
 
     @Override
     public int getEntityId() {
-        return npcData.getId().hashCode();
+        return npcData.getId()
+            .hashCode();
     }
-  
+
     @Override
     public boolean isInvisibleToPlayer(EntityPlayer player) {
-       return true;
+        return true;
     }
- 
+
     @Override
     public boolean isInvisible() {
-       return true;
+        return true;
     }
- 
+
     @Override
-    public void onUpdate() {
-    }
- 
+    public void onUpdate() {}
+
     @Override
     public boolean interact(EntityPlayer player) {
-       return false;
+        return false;
     }
 }

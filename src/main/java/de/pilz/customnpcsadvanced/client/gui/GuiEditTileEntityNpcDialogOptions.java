@@ -1,10 +1,11 @@
 package de.pilz.customnpcsadvanced.client.gui;
 
+import net.minecraft.client.gui.GuiScreen;
+
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
-import net.minecraft.client.gui.GuiScreen;
 import noppes.npcs.client.gui.advanced.GuiNPCDialogNpcOptions;
 
 public class GuiEditTileEntityNpcDialogOptions extends GuiNPCDialogNpcOptions {
