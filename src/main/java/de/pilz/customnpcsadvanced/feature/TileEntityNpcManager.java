@@ -93,8 +93,9 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
         if (dataContainer == null) {
-            dataContainer = (TileEntityNpcDataContainer) event.world.loadItemData(TileEntityNpcDataContainer.class, TileEntityNpcDataContainer.FILENAME);
-    
+            dataContainer = (TileEntityNpcDataContainer) event.world
+                .loadItemData(TileEntityNpcDataContainer.class, TileEntityNpcDataContainer.FILENAME);
+
             if (dataContainer == null) {
                 dataContainer = new TileEntityNpcDataContainer(TileEntityNpcDataContainer.FILENAME);
                 event.world.setItemData(TileEntityNpcDataContainer.FILENAME, dataContainer);
