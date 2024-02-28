@@ -3,8 +3,9 @@ package de.pilz.customnpcsadvanced.client.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 
+import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
-import de.pilz.customnpcsadvanced.network.messages.MessageSaveTileEntity;
+import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.advanced.GuiNPCDialogNpcOptions;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
@@ -17,16 +18,12 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
 
     private GuiNpcTextField tbName;
     private EntityNPCInterface fakeNpc;
-    private int tilePosX;
-    private int tilePosY;
-    private int tilePosZ;
+    private TileEntityNpcData npcData;
 
-    public GuiEditTileEntityNpcData(EntityNPCInterface npc, int tilePosX, int tilePosY, int tilePosZ) {
+    public GuiEditTileEntityNpcData(EntityNPCInterface npc, TileEntityNpcData npcData) {
         super(null);
         fakeNpc = npc;
-        this.tilePosX = tilePosX;
-        this.tilePosY = tilePosY;
-        this.tilePosZ = tilePosZ;
+        this.npcData = npcData;
     }
 
     @Override
@@ -57,7 +54,7 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
 
     @Override
     public void save() {
-        NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(tilePosX, tilePosY, tilePosZ, tbName.getText()));
-        // player.worldObj.markBlockForUpdate(tilePosX, tilePosY, tilePosZ);
+        npcData.setTitle(tbName.getText());
+        NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(npcData));
     }
 }

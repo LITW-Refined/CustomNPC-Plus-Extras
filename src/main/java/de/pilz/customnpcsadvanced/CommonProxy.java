@@ -4,12 +4,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.IGuiHandler;
-import de.pilz.customnpcsadvanced.feature.AdvancedTileEntityManager;
+import de.pilz.customnpcsadvanced.feature.TileEntityNpcManager;
 
 public class CommonProxy implements IGuiHandler {
 
@@ -22,7 +23,10 @@ public class CommonProxy implements IGuiHandler {
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(AdvancedTileEntityManager.Instance);
+        MinecraftForge.EVENT_BUS.register(TileEntityNpcManager.Instance);
+        FMLCommonHandler.instance()
+            .bus()
+            .register(TileEntityNpcManager.Instance);
     }
 
     // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)

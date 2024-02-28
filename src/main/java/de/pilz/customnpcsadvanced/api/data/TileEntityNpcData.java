@@ -1,24 +1,34 @@
 package de.pilz.customnpcsadvanced.api.data;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 
 import noppes.npcs.controllers.data.Dialog;
 import noppes.npcs.controllers.data.DialogOption;
 
 public class TileEntityNpcData {
 
-    protected static final String NBT_KEY = "NpcData";
     protected static final String NBT_KEY_DIALOGS = "Dialogs";
     protected static final String NBT_KEY_DIALOGS_SLOT = "Slot";
     protected static final String NBT_KEY_DIALOGS_OPTION = "Option";
     protected static final String NBT_KEY_NPCNAME = "Title";
+    protected static final String NBT_KEY_ID = "Id";
+    protected static final String NBT_KEY_POSITION_X = "PosX";
+    protected static final String NBT_KEY_POSITION_Y = "PosY";
+    protected static final String NBT_KEY_POSITION_Z = "PosZ";
     protected static final int DIALOG_OPTIONS_COUNT = 10;
     protected static final String DEFAULT_NPC_NAME = "Fake Entity";
 
+    public Integer posX = 0;
+    public Integer posY = 0;
+    public Integer posZ = 0;
+    protected String id = UUID.randomUUID()
+        .toString();
     protected String title = DEFAULT_NPC_NAME;
     protected HashMap<Integer, DialogOption> dialogs = new HashMap<Integer, DialogOption>();
 
@@ -54,42 +64,79 @@ public class TileEntityNpcData {
         this.title = title;
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public boolean equals(String id) {
+        return this.id == id;
+    }
+
+    public boolean equals(TileEntityNpcData other) {
+        return other.equals(id);
+    }
+
+    public boolean equals(TileEntity other) {
+        return other.xCoord == posX && other.yCoord == posY && other.zCoord == posZ;
+    }
+
+    public void clone(TileEntityNpcData newData) {
+        posX = newData.posX;
+        posY = newData.posY;
+        posZ = newData.posZ;
+        title = newData.title;
+        dialogs.clear();
+        dialogs.putAll(newData.dialogs);
+    }
+
+    public void readFromNBT(NBTTagCompound compound) {
         dialogs = new HashMap<Integer, DialogOption>();
 
-        if (nbt.hasKey(NBT_KEY)) {
-            NBTTagCompound compound = nbt.getCompoundTag(NBT_KEY);
+        // Id
+        id = compound.getString(NBT_KEY_ID);
 
-            // Title
-            if (compound.hasKey(NBT_KEY_NPCNAME)) {
-                title = compound.getString(NBT_KEY_NPCNAME);
-            } else {
-                title = DEFAULT_NPC_NAME;
-            }
+        // Position
+        posX = compound.getInteger(NBT_KEY_POSITION_X);
+        posY = compound.getInteger(NBT_KEY_POSITION_Y);
+        posZ = compound.getInteger(NBT_KEY_POSITION_Z);
 
-            // Dialogs
-            if (compound.hasKey(NBT_KEY_DIALOGS)) {
-                NBTTagList tagList = compound.getTagList(NBT_KEY_DIALOGS, DIALOG_OPTIONS_COUNT);
-
-                for (int i = 0; i < tagList.tagCount(); i++) {
-                    NBTTagCompound nbttagcompound = tagList.getCompoundTagAt(i);
-                    int slot = nbttagcompound.getInteger(NBT_KEY_DIALOGS_SLOT);
-                    DialogOption option = new DialogOption();
-                    option.readNBT(nbttagcompound.getCompoundTag(NBT_KEY_DIALOGS_OPTION));
-                    dialogs.put(slot, option);
-                }
-            }
+        // Title
+        if (compound.hasKey(NBT_KEY_NPCNAME)) {
+            title = compound.getString(NBT_KEY_NPCNAME);
         } else {
             title = DEFAULT_NPC_NAME;
         }
+
+        // Dialogs
+        if (compound.hasKey(NBT_KEY_DIALOGS)) {
+            NBTTagList tagList = compound.getTagList(NBT_KEY_DIALOGS, DIALOG_OPTIONS_COUNT);
+
+            for (int i = 0; i < tagList.tagCount(); i++) {
+                NBTTagCompound nbttagcompound = tagList.getCompoundTagAt(i);
+                int slot = nbttagcompound.getInteger(NBT_KEY_DIALOGS_SLOT);
+                DialogOption option = new DialogOption();
+                option.readNBT(nbttagcompound.getCompoundTag(NBT_KEY_DIALOGS_OPTION));
+                dialogs.put(slot, option);
+            }
+        }
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound getAsNBT() {
         NBTTagCompound compound = new NBTTagCompound();
+        writeToNBT(compound);
+        return compound;
+    }
+
+    public void writeToNBT(NBTTagCompound compound) {
+        // Id
+        compound.setString(NBT_KEY_ID, id);
+
+        // Position
+        compound.setInteger(NBT_KEY_POSITION_X, posX);
+        compound.setInteger(NBT_KEY_POSITION_Y, posY);
+        compound.setInteger(NBT_KEY_POSITION_Z, posZ);
 
         // Title
         if (title != null && !title.equals(DEFAULT_NPC_NAME)) {
             compound.setString(NBT_KEY_NPCNAME, title);
+        } else {
+            compound.removeTag(NBT_KEY_NPCNAME);
         }
 
         // Dialogs
@@ -105,39 +152,8 @@ public class TileEntityNpcData {
         }
         if (nbtDialogs.tagCount() > 0) {
             compound.setTag(NBT_KEY_DIALOGS, nbtDialogs);
-        }
-
-        // Write to nbt
-        if (compound.hasNoTags()) {
-            nbt.removeTag(NBT_KEY);
         } else {
-            nbt.setTag(NBT_KEY, compound);
-        }
-    }
-
-    public static boolean hasNpcData(NBTTagCompound nbt) {
-        return nbt.hasKey(NBT_KEY);
-    }
-
-    public static TileEntityNpcData loadFromNBT(NBTTagCompound nbt, boolean forceLoad) {
-        TileEntityNpcData data;
-
-        if (hasNpcData(nbt)) {
-            data = new TileEntityNpcData(nbt);
-        } else if (forceLoad) {
-            data = new TileEntityNpcData();
-        } else {
-            data = null;
-        }
-
-        return data;
-    }
-
-    public static void savetoNBT(NBTTagCompound nbt, TileEntityNpcData data) {
-        if (data != null) {
-            data.writeToNBT(nbt);
-        } else {
-            nbt.removeTag(NBT_KEY);
+            compound.removeTag(NBT_KEY_DIALOGS);
         }
     }
 }

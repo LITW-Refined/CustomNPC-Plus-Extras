@@ -4,12 +4,10 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import de.pilz.customnpcsadvanced.CustomNpcPlusExtras;
-import de.pilz.customnpcsadvanced.network.handlers.HandlerOpenGuiEditTileEntityOk;
-import de.pilz.customnpcsadvanced.network.handlers.HandlerOpenGuiEditTileEntityRequest;
-import de.pilz.customnpcsadvanced.network.handlers.HandlerSaveTileEntity;
-import de.pilz.customnpcsadvanced.network.messages.MessageOpenGuiEditTileEntityOk;
-import de.pilz.customnpcsadvanced.network.messages.MessageOpenGuiEditTileEntityRequest;
-import de.pilz.customnpcsadvanced.network.messages.MessageSaveTileEntity;
+import de.pilz.customnpcsadvanced.network.handlers.client.HandlerOpenGuiEditTileEntity;
+import de.pilz.customnpcsadvanced.network.handlers.server.HandlerSaveTileEntity;
+import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
+import de.pilz.customnpcsadvanced.network.messages.server.MessageOpenGuiEditTileEntity;
 
 public class NetworkManager {
 
@@ -17,16 +15,12 @@ public class NetworkManager {
         .newSimpleChannel(CustomNpcPlusExtras.MODID);
 
     public static void init() {
+        int messageId = 0;
         netWrap.registerMessage(
-            HandlerOpenGuiEditTileEntityRequest.class,
-            MessageOpenGuiEditTileEntityRequest.class,
-            0,
-            Side.SERVER);
-        netWrap.registerMessage(
-            HandlerOpenGuiEditTileEntityOk.class,
-            MessageOpenGuiEditTileEntityOk.class,
-            1,
+            HandlerOpenGuiEditTileEntity.class,
+            MessageOpenGuiEditTileEntity.class,
+            messageId++,
             Side.CLIENT);
-        netWrap.registerMessage(HandlerSaveTileEntity.class, MessageSaveTileEntity.class, 2, Side.SERVER);
+        netWrap.registerMessage(HandlerSaveTileEntity.class, MessageSaveTileEntity.class, messageId++, Side.SERVER);
     }
 }

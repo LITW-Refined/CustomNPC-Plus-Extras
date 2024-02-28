@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import de.pilz.customnpcsadvanced.client.gui.EnumGuiType;
-import de.pilz.customnpcsadvanced.feature.AdvancedTileEntityManager;
+import de.pilz.customnpcsadvanced.feature.TileEntityNpcManager;
 
 public class ClientProxy extends CommonProxy {
 
@@ -15,7 +15,7 @@ public class ClientProxy extends CommonProxy {
 
             switch (gui) {
                 case EditTileEntityNpc: {
-                    return AdvancedTileEntityManager.Instance.OpenEditorGui(player, world, x, y, z);
+                    return TileEntityNpcManager.Instance.OpenEditorGui(player, world, x, y, z);
                 }
             }
         }
