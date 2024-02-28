@@ -23,20 +23,20 @@ public class BaseMessageTileEntityNpcData implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         try {
-            NBTTagCompound compound = new NBTTagCompound();
-            npcData.writeToNBT(compound);
-            NetworkUtils.writeNBT(buf, compound);
+            NBTTagCompound compound = NetworkUtils.readNBT(buf);
+            if (compound != null) {
+                npcData = new TileEntityNpcData();
+                npcData.readFromNBT(compound);
+            }
         } catch (IOException ex) {}
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         try {
-            NBTTagCompound compound = NetworkUtils.readNBT(buf);
-            if (compound != null) {
-                npcData = new TileEntityNpcData();
-                npcData.readFromNBT(compound);
-            }
+            NBTTagCompound compound = new NBTTagCompound();
+            npcData.writeToNBT(compound);
+            NetworkUtils.writeNBT(buf, compound);
         } catch (IOException ex) {}
     }
 }

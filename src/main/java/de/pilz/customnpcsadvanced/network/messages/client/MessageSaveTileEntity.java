@@ -5,6 +5,8 @@ import de.pilz.customnpcsadvanced.network.messages.BaseMessageTileEntityNpcData;
 
 public class MessageSaveTileEntity extends BaseMessageTileEntityNpcData {
 
+    public MessageSaveTileEntity() {}
+
     public MessageSaveTileEntity(TileEntityNpcData npcData) {
         super(npcData);
     }

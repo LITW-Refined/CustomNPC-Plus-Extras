@@ -10,8 +10,6 @@ import net.minecraftforge.event.world.WorldEvent;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import de.pilz.customnpcsadvanced.api.ITileEntityNpcManager;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcDataContainer;
@@ -80,7 +78,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         TileEntity tile = (TileEntity) world.getTileEntity(x, y, z);
         TileEntityNpcData npcData = TileEntityNpcManager.Instance.editingNpc;
 
-        if (npcData.equals(tile)) {
+        if (tile != null && npcData != null && npcData.equals(tile)) {
             EntityDialogNpc npc = new EntityDialogNpc(tile.getWorldObj());
             EntityUtil.Copy(player, npc);
             npc.display.setName(npcData.getTitle());
@@ -93,14 +91,14 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.SERVER)
     public void onWorldLoad(WorldEvent.Load event) {
-        dataContainer = (TileEntityNpcDataContainer) event.world
-            .loadItemData(TileEntityNpcDataContainer.class, TileEntityNpcDataContainer.FILENAME);
-
         if (dataContainer == null) {
-            dataContainer = new TileEntityNpcDataContainer(TileEntityNpcDataContainer.FILENAME);
-            event.world.setItemData(TileEntityNpcDataContainer.FILENAME, dataContainer);
+            dataContainer = (TileEntityNpcDataContainer) event.world.loadItemData(TileEntityNpcDataContainer.class, TileEntityNpcDataContainer.FILENAME);
+    
+            if (dataContainer == null) {
+                dataContainer = new TileEntityNpcDataContainer(TileEntityNpcDataContainer.FILENAME);
+                event.world.setItemData(TileEntityNpcDataContainer.FILENAME, dataContainer);
+            }
         }
     }
 
@@ -123,7 +121,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         }
 
         if (createIfNull) {
-            return new TileEntityNpcData();
+            return new TileEntityNpcData(te);
         }
 
         return null;

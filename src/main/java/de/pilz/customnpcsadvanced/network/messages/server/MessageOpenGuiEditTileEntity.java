@@ -5,6 +5,8 @@ import de.pilz.customnpcsadvanced.network.messages.BaseMessageTileEntityNpcData;
 
 public class MessageOpenGuiEditTileEntity extends BaseMessageTileEntityNpcData {
 
+    public MessageOpenGuiEditTileEntity() {}
+
     public MessageOpenGuiEditTileEntity(TileEntityNpcData npcData) {
         super(npcData);
     }

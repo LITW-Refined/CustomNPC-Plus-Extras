@@ -39,6 +39,11 @@ public class TileEntityNpcData {
         readFromNBT(nbt);
     }
 
+    public TileEntityNpcData(TileEntity te) {
+        this();
+        setPosition(te);
+    }
+
     public HashMap<Integer, DialogOption> getDialogOptions() {
         return dialogs;
     }
@@ -62,6 +67,16 @@ public class TileEntityNpcData {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setPosition(int x, int y, int z) {
+        posX = x;
+        posY = y;
+        posZ = z;
+    }
+
+    public void setPosition(TileEntity te) {
+        setPosition(te.xCoord, te.yCoord, te.zCoord);
     }
 
     public boolean equals(String id) {
