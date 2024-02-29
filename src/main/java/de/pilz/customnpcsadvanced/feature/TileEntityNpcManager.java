@@ -52,7 +52,6 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
                 PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-                playerData.setGUIOpen(true);
                 playerData.editingNpc = npc;
                 NetworkManager.netWrap.sendTo(new MessageOpenGuiEditTileEntity(npcData), player);
                 event.useBlock = Result.DENY;
@@ -92,9 +91,10 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
             EntityUtil.Copy(player, npc);
             npc.display.setName(npcData.getTitle());
             npc.dialogs = npcData.getDialogOptions();
-            PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-            playerData.setGUIOpen(true);
-            playerData.editingNpc = npc;
+            if (PlayerDataController.Instance != null) {
+                // Only do this on the server or in single player mode
+                PlayerDataController.Instance.getPlayerData(player).editingNpc = npc;
+            }
             return new GuiEditTileEntityNpcData(npc, npcData);
         }
 
