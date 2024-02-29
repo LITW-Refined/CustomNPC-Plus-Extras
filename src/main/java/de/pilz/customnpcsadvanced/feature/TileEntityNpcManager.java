@@ -37,7 +37,8 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
 
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.world.isRemote || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || event.isCanceled()) {
+        if (event.world.isRemote || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK
+            || event.isCanceled()) {
             return;
         }
 
@@ -47,7 +48,8 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
 
         if (tile != null) {
             if (heldItem != null && heldItem.getItem() == CustomItems.wand
-                && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player)) && event.useItem != Result.DENY) {
+                && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))
+                && event.useItem != Result.DENY) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
                 PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
@@ -56,28 +58,29 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
                 NetworkManager.netWrap.sendTo(new MessageOpenGuiEditTileEntity(npcData), player);
                 event.useBlock = Result.DENY;
                 event.useItem = Result.DENY;
-            } else if (!player.isSneaking() && (heldItem == null /*|| heldItem.getItemUseAction() == EnumAction.none*/)) {
-                TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, false);
+            } else if (!player.isSneaking()
+                && (heldItem == null /* || heldItem.getItemUseAction() == EnumAction.none */)) {
+                    TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, false);
 
-                if (npcData != null) {
-                    Dialog dialog = npcData.getDialog(player);
+                    if (npcData != null) {
+                        Dialog dialog = npcData.getDialog(player);
 
-                    if (dialog != null) {
-                        DialogOption option = new DialogOption();
-                        option.dialogId = dialog.id;
-                        option.title = dialog.title;
+                        if (dialog != null) {
+                            DialogOption option = new DialogOption();
+                            option.dialogId = dialog.id;
+                            option.title = dialog.title;
 
-                        EntityDialogNpc npc = new EntityDialogNpc(event.world);
-                        EntityUtil.Copy(player, npc);
-                        npc.display.setName(npcData.getTitle());
-                        npc.dialogs.put(0, option);
+                            EntityDialogNpc npc = new EntityDialogNpc(event.world);
+                            EntityUtil.Copy(player, npc);
+                            npc.display.setName(npcData.getTitle());
+                            npc.dialogs.put(0, option);
 
-                        NoppesUtilServer.openDialog(player, npc, dialog, 0);
-                        event.useBlock = Result.DENY;
-                        event.useItem = Result.DENY;
+                            NoppesUtilServer.openDialog(player, npc, dialog, 0);
+                            event.useBlock = Result.DENY;
+                            event.useItem = Result.DENY;
+                        }
                     }
                 }
-            }
         }
     }
 
