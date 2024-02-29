@@ -48,8 +48,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
 
         if (tile != null) {
             if (heldItem != null && heldItem.getItem() == CustomItems.wand
-                && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))
-                && event.useItem != Result.DENY) {
+                && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
                 PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
