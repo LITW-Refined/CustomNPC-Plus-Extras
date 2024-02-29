@@ -16,7 +16,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
     modid = CustomNpcPlusExtras.MODID,
     version = Tags.VERSION,
     name = "CustomNPC+ Advancements",
-    acceptedMinecraftVersions = "[1.7.10]")
+    acceptedMinecraftVersions = "[1.7.10]",
+    acceptableRemoteVersions = "*")
 public class CustomNpcPlusExtras {
 
     public static final String MODID = "customnpcsadvanced";
