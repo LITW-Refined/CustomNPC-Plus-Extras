@@ -2,6 +2,7 @@ package de.pilz.customnpcsadvanced.feature;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -11,7 +12,6 @@ import net.minecraftforge.event.world.WorldEvent;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import de.pilz.customnpcsadvanced.ItemRegistry;
 import de.pilz.customnpcsadvanced.api.ITileEntityNpcManager;
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
@@ -47,7 +47,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         ItemStack heldItem = player.getHeldItem();
 
         if (tile != null) {
-            if (heldItem != null && heldItem.getItem() == ItemRegistry.itemWandAdv
+            if (heldItem != null && heldItem.getItem() == Items.bone
                 && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);

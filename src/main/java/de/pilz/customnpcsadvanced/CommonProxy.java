@@ -21,7 +21,6 @@ public class CommonProxy implements IGuiHandler {
     public void preInit(FMLPreInitializationEvent event) {
         Config.init();
         CustomNpcPlusExtras.LOG.info("I am Custom NPC+ Extras at version " + Tags.VERSION);
-        ItemRegistry.register();
     }
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
