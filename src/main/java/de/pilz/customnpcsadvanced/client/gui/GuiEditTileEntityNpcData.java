@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
+import de.pilz.customnpcsadvanced.network.messages.client.MessageDeleteTileEntityNpc;
 import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
@@ -18,9 +19,11 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
     private final TileEntityNpc fakeNpc;
     private final TileEntityNpcData npcData;
     private GuiNpcTextField tbName;
+    private boolean hasDeleted = false;
 
     public GuiEditTileEntityNpcData(TileEntityNpc npc, TileEntityNpcData npcData) {
         super(null);
+        closeOnEsc = true;
         fakeNpc = npc;
         this.npcData = npcData;
     }
@@ -36,6 +39,7 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
         tbName.setText(fakeNpc.display.getName());
         this.addTextField(tbName);
         this.addButton(new GuiNpcButton(0, guiLeft + 85, y += gap, 214, 20, "gui.dialogOptions"));
+        this.addButton(new GuiNpcButton(3, guiLeft + 85, y += gap, 214, 20, "gui.deletenpc"));
     }
 
     @Override
@@ -45,6 +49,10 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
         if (button.id == 0) {
             save();
             NoppesUtil.openGUI(player, new GuiEditTileEntityNpcDialogOptions(fakeNpc, npcData, this));
+        } else if (button.id == 3) {
+            hasDeleted = true;
+            NetworkManager.netWrap.sendToServer(new MessageDeleteTileEntityNpc(npcData));
+            close();
         }
     }
 
@@ -53,6 +61,7 @@ public class GuiEditTileEntityNpcData extends GuiNPCInterface2 implements IGuiDa
 
     @Override
     public void save() {
+        if (hasDeleted) return;
         npcData.setTitle(tbName.getText());
         NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(npcData));
     }

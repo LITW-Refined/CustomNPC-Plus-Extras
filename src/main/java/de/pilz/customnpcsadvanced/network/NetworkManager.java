@@ -5,7 +5,9 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import de.pilz.customnpcsadvanced.CustomNpcPlusExtras;
 import de.pilz.customnpcsadvanced.network.handlers.client.HandlerOpenGuiEditTileEntity;
+import de.pilz.customnpcsadvanced.network.handlers.server.HandlerDeleteTileEntityNpc;
 import de.pilz.customnpcsadvanced.network.handlers.server.HandlerSaveTileEntity;
+import de.pilz.customnpcsadvanced.network.messages.client.MessageDeleteTileEntityNpc;
 import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
 import de.pilz.customnpcsadvanced.network.messages.server.MessageOpenGuiEditTileEntity;
 
@@ -22,5 +24,7 @@ public class NetworkManager {
             MessageOpenGuiEditTileEntity.class,
             curMsgId++,
             Side.CLIENT);
+        netWrap
+            .registerMessage(HandlerDeleteTileEntityNpc.class, MessageDeleteTileEntityNpc.class, curMsgId, Side.SERVER);
     }
 }
