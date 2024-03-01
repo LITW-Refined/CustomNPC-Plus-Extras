@@ -11,6 +11,7 @@ import net.minecraftforge.event.world.WorldEvent;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import de.pilz.customnpcsadvanced.ItemRegistry;
 import de.pilz.customnpcsadvanced.api.ITileEntityNpcManager;
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
@@ -18,7 +19,6 @@ import de.pilz.customnpcsadvanced.api.data.TileEntityNpcDataContainer;
 import de.pilz.customnpcsadvanced.client.gui.GuiEditTileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.server.MessageOpenGuiEditTileEntity;
-import noppes.npcs.CustomItems;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.client.EntityUtil;
 import noppes.npcs.config.ConfigMain;
@@ -47,7 +47,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         ItemStack heldItem = player.getHeldItem();
 
         if (tile != null) {
-            if (heldItem != null && heldItem.getItem() == CustomItems.wand
+            if (heldItem != null && heldItem.getItem() == ItemRegistry.itemWandAdv
                 && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
