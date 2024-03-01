@@ -50,7 +50,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
             if (heldItem != null && heldItem.getItem() == CustomItems.wand
                 && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
-                TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
+                TileEntityNpc npc = new TileEntityNpc(player, event.world, npcData);
                 PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
                 playerData.editingNpc = npc;
                 NetworkManager.netWrap.sendTo(new MessageOpenGuiEditTileEntity(npcData), player);
@@ -82,20 +82,17 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         }
     }
 
-    public Object OpenEditorGui(EntityPlayer player, World world, int x, int y, int z) {
+    public Object openEditorGui(EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = (TileEntity) world.getTileEntity(x, y, z);
         TileEntityNpcData npcData = TileEntityNpcManager.Instance.editingNpc;
 
         if (tile != null && npcData != null && npcData.equals(tile)) {
-            TileEntityNpc npc = new TileEntityNpc(tile.getWorldObj(), npcData);
-            EntityUtil.Copy(player, npc);
-            npc.display.setName(npcData.getTitle());
-            npc.dialogs = npcData.getDialogOptions();
+            TileEntityNpc npc = new TileEntityNpc(player, tile.getWorldObj(), npcData);
             if (PlayerDataController.Instance != null) {
                 // Only do this on the server or in single player mode
                 PlayerDataController.Instance.getPlayerData(player).editingNpc = npc;
             }
-            return new GuiEditTileEntityNpcData(npc, npcData);
+            return new GuiEditTileEntityNpcData(npc, npcData, player);
         }
 
         return null;

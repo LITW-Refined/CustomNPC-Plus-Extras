@@ -18,7 +18,7 @@ public class ClientProxy extends CommonProxy {
 
             switch (gui) {
                 case EditTileEntityNpc: {
-                    return TileEntityNpcManager.Instance.OpenEditorGui(player, world, x, y, z);
+                    return TileEntityNpcManager.Instance.openEditorGui(player, world, x, y, z);
                 }
             }
         }

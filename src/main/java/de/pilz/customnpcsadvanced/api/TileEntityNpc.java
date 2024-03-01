@@ -4,17 +4,39 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
+import de.pilz.customnpcsadvanced.api.data.roles.RoleInfo;
+import noppes.npcs.client.EntityUtil;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class TileEntityNpc extends EntityNPCInterface {
 
     public TileEntityNpcData npcData;
 
-    public TileEntityNpc(World world, TileEntityNpcData npcData) {
+    public TileEntityNpc(EntityPlayer player, World world, TileEntityNpcData npcData) {
         super(world);
-        this.npcData = npcData;
-        display.title = npcData.getTitle();
+
+        // Use player as base for most data
+        if (player != null) {
+            EntityUtil.Copy(player, this);
+        }
+
+        // Adjust position
+        setPosition(npcData.posX, npcData.posY, npcData.posZ);
+
+        // Name
+        display.setName(npcData.getTitle());
+
+        // Dialogs
         dialogs = npcData.getDialogOptions();
+        
+        // Role type
+        advanced.setRole(npcData.getRole().ordinal());
+        
+        // Role info
+        RoleInfo roleInfo = npcData.getRoleInfo();
+        if (roleInfo != null && roleInterface != null) {
+            roleInfo.saveToRoleInterface(roleInterface);
+        }
     }
 
     @Override

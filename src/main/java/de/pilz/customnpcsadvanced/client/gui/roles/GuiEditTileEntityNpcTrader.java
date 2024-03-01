@@ -1,20 +1,19 @@
-package de.pilz.customnpcsadvanced.client.gui;
-
-import net.minecraft.client.gui.GuiScreen;
+package de.pilz.customnpcsadvanced.client.gui.roles;
 
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.client.MessageSaveTileEntity;
-import noppes.npcs.client.gui.advanced.GuiNPCDialogNpcOptions;
+import noppes.npcs.client.gui.roles.GuiNpcTraderSetup;
+import noppes.npcs.containers.ContainerNPCTraderSetup;
 
-public class GuiEditTileEntityNpcDialogOptions extends GuiNPCDialogNpcOptions {
+public class GuiEditTileEntityNpcTrader extends GuiNpcTraderSetup {
 
     public final TileEntityNpc fakeNpc;
     public final TileEntityNpcData npcData;
 
-    public GuiEditTileEntityNpcDialogOptions(TileEntityNpc npc, TileEntityNpcData npcData, GuiScreen parent) {
-        super(npc, parent);
+    public GuiEditTileEntityNpcTrader(TileEntityNpc npc, TileEntityNpcData npcData, ContainerNPCTraderSetup container) {
+        super(npc, container);
         fakeNpc = npc;
         this.npcData = npcData;
     }
@@ -22,8 +21,7 @@ public class GuiEditTileEntityNpcDialogOptions extends GuiNPCDialogNpcOptions {
     @Override
     public void save() {
         super.save();
-        // It is useless to copy dialogs here on client side because CNPC+ saves them always on server side.
-        // npcData.setDialogOptions(fakeNpc.dialogs);
+        // Also here, don't save ourselfe.
         NetworkManager.netWrap.sendToServer(new MessageSaveTileEntity(npcData));
     }
 }

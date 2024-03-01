@@ -3,26 +3,31 @@ package de.pilz.customnpcsadvanced.api.data;
 import java.util.HashMap;
 import java.util.UUID;
 
+import de.pilz.customnpcsadvanced.api.data.roles.RoleInfo;
+import de.pilz.customnpcsadvanced.api.data.roles.RoleTraderInfo;
+import de.pilz.customnpcsadvanced.api.data.roles.RoleTransporterInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-
+import noppes.npcs.constants.EnumRoleType;
 import noppes.npcs.controllers.data.Dialog;
 import noppes.npcs.controllers.data.DialogOption;
 
 public class TileEntityNpcData {
 
-    protected static final String NBT_KEY_DIALOGS = "Dialogs";
-    protected static final String NBT_KEY_DIALOGS_SLOT = "Slot";
-    protected static final String NBT_KEY_DIALOGS_OPTION = "Option";
-    protected static final String NBT_KEY_NPCNAME = "Title";
-    protected static final String NBT_KEY_ID = "Id";
-    protected static final String NBT_KEY_POSITION_X = "PosX";
-    protected static final String NBT_KEY_POSITION_Y = "PosY";
-    protected static final String NBT_KEY_POSITION_Z = "PosZ";
-    protected static final int DIALOG_OPTIONS_COUNT = 10;
-    protected static final String DEFAULT_NPC_NAME = "Fake Entity";
+    public static final String NBT_KEY_ROLE_TYPE = "RoleType";
+    public static final String NBT_KEY_ROLE_INFO = "RoleInfo";
+    public static final String NBT_KEY_DIALOGS = "Dialogs";
+    public static final String NBT_KEY_DIALOGS_SLOT = "Slot";
+    public static final String NBT_KEY_DIALOGS_OPTION = "Option";
+    public static final String NBT_KEY_NPCNAME = "Title";
+    public static final String NBT_KEY_ID = "Id";
+    public static final String NBT_KEY_POSITION_X = "PosX";
+    public static final String NBT_KEY_POSITION_Y = "PosY";
+    public static final String NBT_KEY_POSITION_Z = "PosZ";
+    public static final int DIALOG_OPTIONS_COUNT = 10;
+    public static final String DEFAULT_NPC_NAME = "Fake Entity";
 
     public Integer posX = 0;
     public Integer posY = 0;
@@ -31,6 +36,8 @@ public class TileEntityNpcData {
         .toString();
     protected String title = DEFAULT_NPC_NAME;
     protected HashMap<Integer, DialogOption> dialogs = new HashMap<Integer, DialogOption>();
+    protected EnumRoleType role = EnumRoleType.None;
+    protected RoleInfo roleInfo = null;
 
     public TileEntityNpcData() {}
 
@@ -86,6 +93,29 @@ public class TileEntityNpcData {
         setPosition(te.xCoord, te.yCoord, te.zCoord);
     }
 
+    public EnumRoleType getRole() {
+        return role;
+    }
+
+    public EnumRoleType setRole(EnumRoleType newRole) {
+        if (role != newRole) {
+            if (newRole == EnumRoleType.Trader) {
+                roleInfo = new RoleTraderInfo();
+            } else if (newRole == EnumRoleType.Transporter) {
+                roleInfo = new RoleTransporterInfo();
+            } else {
+                roleInfo = null;
+                newRole = EnumRoleType.None;
+            }
+            role = newRole;
+        }
+        return role;
+    }
+
+    public RoleInfo getRoleInfo() {
+        return roleInfo;
+    }
+
     public boolean equals(String id) {
         return this.id.equals(id);
     }
@@ -99,12 +129,9 @@ public class TileEntityNpcData {
     }
 
     public void clone(TileEntityNpcData newData) {
-        posX = newData.posX;
-        posY = newData.posY;
-        posZ = newData.posZ;
-        title = newData.title;
-        dialogs.clear();
-        dialogs.putAll(newData.dialogs);
+        NBTTagCompound nbt = new NBTTagCompound();
+        newData.writeToNBT(nbt);
+        readFromNBT(nbt);
     }
 
     public void readFromNBT(NBTTagCompound compound) {
@@ -136,6 +163,21 @@ public class TileEntityNpcData {
                 option.readNBT(nbttagcompound.getCompoundTag(NBT_KEY_DIALOGS_OPTION));
                 dialogs.put(slot, option);
             }
+        }
+
+        // Role type
+        if (compound.hasKey(NBT_KEY_ROLE_TYPE)) {
+            setRole(EnumRoleType.values()[compound.getInteger(NBT_KEY_ROLE_TYPE)]);
+        } else {
+            setRole(EnumRoleType.None);
+        }
+
+        // Role info
+        if (compound.hasKey(NBT_KEY_ROLE_INFO) && roleInfo != null) {
+            NBTTagCompound nbtRoleInfo = compound.getCompoundTag(NBT_KEY_ROLE_INFO);
+            roleInfo.readFromNBT(nbtRoleInfo);
+        } else {
+            roleInfo = null;
         }
     }
 
@@ -176,6 +218,22 @@ public class TileEntityNpcData {
             compound.setTag(NBT_KEY_DIALOGS, nbtDialogs);
         } else {
             compound.removeTag(NBT_KEY_DIALOGS);
+        }
+
+        // Role type
+        if (role != EnumRoleType.None) {
+            compound.setInteger(NBT_KEY_ROLE_TYPE, role.ordinal());
+        } else {
+            compound.removeTag(NBT_KEY_ROLE_TYPE);
+        }
+
+        // Role info
+        if (roleInfo != null) {
+            NBTTagCompound nbtRoleInfo = new NBTTagCompound();
+            roleInfo.writeToNBT(nbtRoleInfo);
+            compound.setTag(NBT_KEY_ROLE_INFO, nbtRoleInfo);
+        } else {
+            compound.removeTag(NBT_KEY_ROLE_INFO);
         }
     }
 }
