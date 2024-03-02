@@ -1,8 +1,9 @@
 package de.pilz.customnpcsadvanced.feature;
 
+import java.util.HashMap;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -10,15 +11,23 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.pilz.customnpcsadvanced.ClientProxy;
 import de.pilz.customnpcsadvanced.api.ITileEntityNpcManager;
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcDataContainer;
 import de.pilz.customnpcsadvanced.client.gui.GuiEditTileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
+import de.pilz.customnpcsadvanced.network.messages.client.MessageToggleEnableAdvWand;
 import de.pilz.customnpcsadvanced.network.messages.server.MessageOpenGuiEditTileEntity;
+import noppes.npcs.CustomItems;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.client.EntityUtil;
 import noppes.npcs.config.ConfigMain;
@@ -34,6 +43,7 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
 
     public TileEntityNpcDataContainer dataContainer = null;
     public TileEntityNpcData editingNpc = null;
+    public HashMap<String, Boolean> enableAdvWand = new HashMap<String, Boolean>();
 
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -47,8 +57,12 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         ItemStack heldItem = player.getHeldItem();
 
         if (tile != null) {
-            if (heldItem != null && heldItem.getItem() == Items.bone
-                && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))) {
+            if (heldItem != null && heldItem.getItem() == CustomItems.wand
+                && (!ConfigMain.OpsOnly || NoppesUtilServer.isOp(player))
+                && enableAdvWand.getOrDefault(
+                    player.getUniqueID()
+                        .toString(),
+                    false)) {
                 TileEntityNpcData npcData = TileEntityNpcManager.Instance.getNpcData(tile, true);
                 TileEntityNpc npc = new TileEntityNpc(event.world, npcData);
                 PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
@@ -121,6 +135,15 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
             if (te != null) {
                 removeNpcData(te);
             }
+        }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onKeyInputEvent(InputEvent.KeyInputEvent event) {
+        if (ClientProxy.keyEnableAdvWand.getIsKeyPressed()
+            && Keyboard.getEventKey() == ClientProxy.keyEnableAdvWand.getKeyCode()) {
+            NetworkManager.netWrap.sendToServer(new MessageToggleEnableAdvWand());
         }
     }
 

@@ -1,3 +1,4 @@
 gui.dialogOptions=Dialogoptionen
 gui.deletenpc=Npc löschen
 item.wandAdv=NPC-Zauberstand (Erweitert)
+key.enableAdvWand=Aktiviere Erweiterten Npc-Zauberstab
