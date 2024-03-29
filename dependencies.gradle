@@ -34,5 +34,7 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    api(project.files("libs/CustomNPC-Plus-dev.jar"))
+    api(rfg.deobf(project.files("libs/CustomNPC-Plus-nomixin.jar")))
+    api("com.github.GTNewHorizons:GTNHLib:0.2.10:dev")
+    compileOnly("com.github.GTNewHorizons:ForestryMC:4.8.7:dev") { transitive = false }
 }
