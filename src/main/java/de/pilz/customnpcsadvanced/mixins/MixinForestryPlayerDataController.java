@@ -1,7 +1,11 @@
 package de.pilz.customnpcsadvanced.mixins;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,21 +36,25 @@ public class MixinForestryPlayerDataController {
             IMailAddress recipient = ForestryMailFeature.getRecipient(username);
             ILetter letter = PostManager.postRegistry.createLetter(sender, recipient);
 
-            // Build header text
-            String letterText = mail.getSubject();
-            if (!letterText.equals("")) {
-                letterText += "\n----------";
-            }
+            // Create signed book for our letter message as it's too long for a Forestry Mail
+            ItemStack book = new ItemStack(Items.written_book);
+            book.setTagInfo("author", new NBTTagString(mail.sender));
+            book.setTagInfo("title", new NBTTagString(mail.subject));
 
-            // Build body text
+            // Write book pages
+            NBTTagList bookPages = new NBTTagList();
             for (int i = 0; i < mail.getPageCount(); i++) {
-                if (!letterText.equals("")) {
-                    letterText += "\n\n";
-                }
-                letterText += mail.getPageText()[i];
+                bookPages.appendTag(new NBTTagString(mail.getPageText()[i]));
             }
+            book.setTagInfo("pages", bookPages);
 
-            // Set the new text
+            // Attach book to mail attachments
+            letter.addAttachment(book);
+
+            // Set letter text
+            String letterText = mail.getSubject();
+            letterText += "\n----------";
+            letterText += "\n" + StatCollector.translateToLocal("letter.seeattachedletter");
             letter.setText(letterText);
 
             // Attachments

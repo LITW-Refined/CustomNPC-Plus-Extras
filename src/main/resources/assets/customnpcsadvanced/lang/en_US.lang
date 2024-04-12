@@ -2,3 +2,4 @@ gui.dialogOptions=Dialog options
 gui.deletenpc=Delete Npc
 item.wandAdv=NPC Wand Advanced
 key.enableAdvWand=Enable Advanced Npc Wand
+letter.seeattachedletter=See attached letter to read the whole message!

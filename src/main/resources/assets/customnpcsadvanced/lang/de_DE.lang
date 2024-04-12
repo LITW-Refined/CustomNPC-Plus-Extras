@@ -2,3 +2,4 @@ gui.dialogOptions=Dialogoptionen
 gui.deletenpc=Npc löschen
 item.wandAdv=NPC-Zauberstand (Erweitert)
 key.enableAdvWand=Aktiviere Erweiterten Npc-Zauberstab
+letter.seeattachedletter=Schau in das angehängte Briefbuch, um die ganze Nachricht zu lesen!
