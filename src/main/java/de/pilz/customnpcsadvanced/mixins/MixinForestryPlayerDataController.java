@@ -65,7 +65,7 @@ public class MixinForestryPlayerDataController {
                 .deliverLetter(world, PostManager.postRegistry.getPostOffice(world), recipient, letterStack, false);
 
             // Don't send original message
-            if (ConfigMail.sendMailViaCusotmNPCs) {
+            if (!ConfigMail.sendMailViaCusotmNPCs) {
                 callback.cancel();
             }
         }
