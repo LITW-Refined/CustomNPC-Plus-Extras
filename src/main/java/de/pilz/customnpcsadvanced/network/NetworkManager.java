@@ -26,9 +26,15 @@ public class NetworkManager {
             MessageOpenGuiEditTileEntity.class,
             curMsgId++,
             Side.CLIENT);
-        netWrap
-            .registerMessage(HandlerDeleteTileEntityNpc.class, MessageDeleteTileEntityNpc.class, curMsgId++, Side.SERVER);
-        netWrap
-            .registerMessage(HandlerToggleEnableAdvWand.class, MessageToggleEnableAdvWand.class, curMsgId++, Side.SERVER);
+        netWrap.registerMessage(
+            HandlerDeleteTileEntityNpc.class,
+            MessageDeleteTileEntityNpc.class,
+            curMsgId++,
+            Side.SERVER);
+        netWrap.registerMessage(
+            HandlerToggleEnableAdvWand.class,
+            MessageToggleEnableAdvWand.class,
+            curMsgId++,
+            Side.SERVER);
     }
 }

@@ -11,6 +11,8 @@ public interface ITileEntityNpcManager {
 
     public TileEntityNpcData getNpcData(String id);
 
+    public TileEntityNpcData[] getAllNpcData();
+
     public void saveNpcData(TileEntityNpcData newData);
 
     public void removeNpcData(TileEntity te);

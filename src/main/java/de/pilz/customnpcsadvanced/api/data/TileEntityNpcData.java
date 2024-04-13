@@ -1,5 +1,10 @@
 package de.pilz.customnpcsadvanced.api.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -8,6 +13,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
+import com.google.gson.Gson;
+
+import de.pilz.customnpcsadvanced.CustomNpcPlusExtras;
 import noppes.npcs.controllers.data.Dialog;
 import noppes.npcs.controllers.data.DialogOption;
 
@@ -21,12 +29,14 @@ public class TileEntityNpcData {
     protected static final String NBT_KEY_POSITION_X = "PosX";
     protected static final String NBT_KEY_POSITION_Y = "PosY";
     protected static final String NBT_KEY_POSITION_Z = "PosZ";
+    protected static final String NBT_KEY_DIMID = "DimId";
     protected static final int DIALOG_OPTIONS_COUNT = 10;
     protected static final String DEFAULT_NPC_NAME = "Fake Entity";
 
     public Integer posX = 0;
     public Integer posY = 0;
     public Integer posZ = 0;
+    public Integer dimId = 0;
     protected String id = UUID.randomUUID()
         .toString();
     protected String title = DEFAULT_NPC_NAME;
@@ -76,14 +86,15 @@ public class TileEntityNpcData {
         this.title = title;
     }
 
-    public void setPosition(int x, int y, int z) {
+    public void setPosition(int x, int y, int z, int dimId) {
         posX = x;
         posY = y;
         posZ = z;
+        this.dimId = dimId;
     }
 
     public void setPosition(TileEntity te) {
-        setPosition(te.xCoord, te.yCoord, te.zCoord);
+        setPosition(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId);
     }
 
     public boolean equals(String id) {
@@ -95,13 +106,16 @@ public class TileEntityNpcData {
     }
 
     public boolean equals(TileEntity other) {
-        return other.xCoord == posX && other.yCoord == posY && other.zCoord == posZ;
+        return other.xCoord == posX && other.yCoord == posY
+            && other.zCoord == posZ
+            && other.getWorldObj().provider.dimensionId == dimId;
     }
 
     public void clone(TileEntityNpcData newData) {
         posX = newData.posX;
         posY = newData.posY;
         posZ = newData.posZ;
+        dimId = newData.dimId;
         title = newData.title;
         dialogs.clear();
         dialogs.putAll(newData.dialogs);
@@ -117,6 +131,7 @@ public class TileEntityNpcData {
         posX = compound.getInteger(NBT_KEY_POSITION_X);
         posY = compound.getInteger(NBT_KEY_POSITION_Y);
         posZ = compound.getInteger(NBT_KEY_POSITION_Z);
+        dimId = compound.getInteger(NBT_KEY_DIMID);
 
         // Title
         if (compound.hasKey(NBT_KEY_NPCNAME)) {
@@ -153,6 +168,7 @@ public class TileEntityNpcData {
         compound.setInteger(NBT_KEY_POSITION_X, posX);
         compound.setInteger(NBT_KEY_POSITION_Y, posY);
         compound.setInteger(NBT_KEY_POSITION_Z, posZ);
+        compound.setInteger(NBT_KEY_DIMID, dimId);
 
         // Title
         if (title != null && !title.equals(DEFAULT_NPC_NAME)) {
@@ -176,6 +192,29 @@ public class TileEntityNpcData {
             compound.setTag(NBT_KEY_DIALOGS, nbtDialogs);
         } else {
             compound.removeTag(NBT_KEY_DIALOGS);
+        }
+    }
+
+    public static TileEntityNpcData readFromFile(File file) {
+        try {
+            String raw = new String(Files.readAllBytes(Paths.get(file.getPath())));
+            return new Gson().fromJson(raw, TileEntityNpcData.class);
+        } catch (IOException ex) {
+            CustomNpcPlusExtras.LOG.error("Npc Data for TileEntity can not be read!", ex);
+        }
+        return null;
+    }
+
+    public void saveToFile(File file) {
+        String raw = new Gson().toJson(this);
+        try {
+            Files.write(
+                Paths.get(file.getPath()),
+                raw.getBytes(),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            CustomNpcPlusExtras.LOG.error("Npc Data for TileEntity can not be written!", ex);
         }
     }
 }

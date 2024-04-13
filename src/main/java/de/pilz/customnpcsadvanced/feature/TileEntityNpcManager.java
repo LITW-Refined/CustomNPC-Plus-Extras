@@ -1,15 +1,17 @@
 package de.pilz.customnpcsadvanced.feature;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.WorldEvent;
 
 import org.lwjgl.input.Keyboard;
 
@@ -19,10 +21,10 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.pilz.customnpcsadvanced.ClientProxy;
+import de.pilz.customnpcsadvanced.CustomNpcPlusExtras;
 import de.pilz.customnpcsadvanced.api.ITileEntityNpcManager;
 import de.pilz.customnpcsadvanced.api.TileEntityNpc;
 import de.pilz.customnpcsadvanced.api.data.TileEntityNpcData;
-import de.pilz.customnpcsadvanced.api.data.TileEntityNpcDataContainer;
 import de.pilz.customnpcsadvanced.client.gui.GuiEditTileEntityNpcData;
 import de.pilz.customnpcsadvanced.network.NetworkManager;
 import de.pilz.customnpcsadvanced.network.messages.client.MessageToggleEnableAdvWand;
@@ -39,9 +41,14 @@ import noppes.npcs.entity.EntityDialogNpc;
 
 public class TileEntityNpcManager implements ITileEntityNpcManager {
 
+    public static final String FILENAME_CUSTOMNPCS = "customnpcs";
+    public static final String FILENAME_ADDONS = "addons";
+    public static final String FILENAME_NPCDATA = "npcdata";
+
     public static final TileEntityNpcManager Instance = new TileEntityNpcManager();
 
-    public TileEntityNpcDataContainer dataContainer = null;
+    protected File npcDataPath = null;
+    protected HashMap<File, TileEntityNpcData> npcData = new HashMap<File, TileEntityNpcData>();
     public TileEntityNpcData editingNpc = null;
     public HashMap<String, Boolean> enableAdvWand = new HashMap<String, Boolean>();
 
@@ -115,15 +122,27 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         return null;
     }
 
-    @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
-        if (dataContainer == null) {
-            dataContainer = (TileEntityNpcDataContainer) event.world
-                .loadItemData(TileEntityNpcDataContainer.class, TileEntityNpcDataContainer.FILENAME);
+    public void initNpcData() {
+        // Clear current list
+        npcData.clear();
 
-            if (dataContainer == null) {
-                dataContainer = new TileEntityNpcDataContainer(TileEntityNpcDataContainer.FILENAME);
-                event.world.setItemData(TileEntityNpcDataContainer.FILENAME, dataContainer);
+        // Load json data files
+        npcDataPath = new File(
+            DimensionManager.getCurrentSaveRootDirectory() + File.separator
+                + FILENAME_CUSTOMNPCS
+                + File.separator
+                + FILENAME_ADDONS
+                + File.separator
+                + CustomNpcPlusExtras.MODID
+                + File.separator
+                + FILENAME_NPCDATA);
+        npcDataPath.mkdirs();
+        File[] files = npcDataPath.listFiles();
+        for (File file : files) {
+            if (file.isFile() && file.getName()
+                .toLowerCase()
+                .endsWith(".json")) {
+                npcData.put(file, null);
             }
         }
     }
@@ -148,9 +167,22 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
     }
 
     @Override
+    public TileEntityNpcData[] getAllNpcData() {
+        HashSet<TileEntityNpcData> list = new HashSet<TileEntityNpcData>();
+
+        for (TileEntityNpcData data : npcData.values()) {
+            if (data != null) {
+                list.add(data);
+            }
+        }
+
+        return list.toArray(new TileEntityNpcData[npcData.size()]);
+    }
+
+    @Override
     public TileEntityNpcData getNpcData(String id) {
-        for (TileEntityNpcData data : dataContainer.npcData) {
-            if (data.equals(id)) {
+        for (TileEntityNpcData data : npcData.values()) {
+            if (data != null && data.equals(id)) {
                 return data;
             }
         }
@@ -159,12 +191,24 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
 
     @Override
     public TileEntityNpcData getNpcData(TileEntity te, boolean createIfNull) {
-        for (TileEntityNpcData data : dataContainer.npcData) {
-            if (data.equals(te)) {
+        // Query loaded npc data
+        for (TileEntityNpcData data : npcData.values()) {
+            if (data != null && data.equals(te)) {
                 return data;
             }
         }
 
+        // Load npc data from existing file
+        for (File file : npcData.keySet()) {
+            String fileName = getNpcFileName(te);
+            if (fileName.equals(file.getName())) {
+                TileEntityNpcData data = TileEntityNpcData.readFromFile(file);
+                npcData.put(file, data);
+                return data;
+            }
+        }
+
+        // Create new npc data
         if (createIfNull) {
             return new TileEntityNpcData(te);
         }
@@ -175,27 +219,38 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
     @Override
     public void saveNpcData(TileEntityNpcData newData) {
         boolean found = false;
+        File output = null;
 
-        for (TileEntityNpcData data : dataContainer.npcData) {
-            if (data.equals(newData)) {
-                data.clone(newData);
+        for (HashMap.Entry<File, TileEntityNpcData> kvp : npcData.entrySet()) {
+            if (kvp.getValue()
+                .equals(newData)) {
+                kvp.getValue()
+                    .clone(newData);
+                output = kvp.getKey();
                 found = true;
             }
         }
 
+        // Build new file path & add new data
         if (!found) {
-            dataContainer.npcData.add(newData);
+            String fileName = getNpcFileName(newData);
+            output = new File(npcDataPath, fileName);
+            npcData.put(output, newData);
         }
 
-        dataContainer.markDirty();
+        // Save file
+        newData.saveToFile(output);
     }
 
     @Override
     public void removeNpcData(TileEntity te) {
-        for (TileEntityNpcData data : dataContainer.npcData) {
-            if (data.equals(te)) {
-                dataContainer.npcData.remove(data);
-                dataContainer.markDirty();
+        for (HashMap.Entry<File, TileEntityNpcData> kvp : npcData.entrySet()) {
+            File file = kvp.getKey();
+            TileEntityNpcData data = kvp.getValue();
+
+            if (data != null && data.equals(te)) {
+                npcData.remove(file);
+                file.delete();
                 break;
             }
         }
@@ -203,12 +258,27 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
 
     @Override
     public void removeNpcData(TileEntityNpcData newData) {
-        for (TileEntityNpcData data : dataContainer.npcData) {
-            if (data.equals(newData)) {
-                dataContainer.npcData.remove(data);
-                dataContainer.markDirty();
+        for (HashMap.Entry<File, TileEntityNpcData> kvp : npcData.entrySet()) {
+            File file = kvp.getKey();
+            TileEntityNpcData data = kvp.getValue();
+
+            if (data != null && data.equals(newData)) {
+                npcData.remove(file);
+                file.delete();
                 break;
             }
         }
+    }
+
+    public static String getNpcFileName(TileEntity entity) {
+        return getNpcFileName(entity.xCoord, entity.yCoord, entity.zCoord, entity.getWorldObj().provider.dimensionId);
+    }
+
+    public static String getNpcFileName(TileEntityNpcData entity) {
+        return getNpcFileName(entity.posX, entity.posY, entity.posZ, entity.dimId);
+    }
+
+    public static String getNpcFileName(int x, int y, int z, int dimensionId) {
+        return "npc.dim" + dimensionId + "." + x + "." + y + "." + z + ".json";
     }
 }
