@@ -222,10 +222,9 @@ public class TileEntityNpcManager implements ITileEntityNpcManager {
         File output = null;
 
         for (HashMap.Entry<File, TileEntityNpcData> kvp : npcData.entrySet()) {
-            if (kvp.getValue()
-                .equals(newData)) {
-                kvp.getValue()
-                    .clone(newData);
+            TileEntityNpcData value = kvp.getValue();
+            if (value != null && value.equals(newData)) {
+                value.clone(newData);
                 output = kvp.getKey();
                 found = true;
             }
